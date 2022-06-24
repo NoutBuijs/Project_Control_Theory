@@ -32,7 +32,7 @@ K_d = np.array([0.1*K_u*2*(402-184), 0.2*K_u*2*(389-195), 0.2*K_u*(136.05-106.71
 # K_p = np.array([0.6*K_u, 0.35*K_u, 0.8*K_u])*-1
 # K_d = np.array([0.6*K_u*(197.599-196.370),0.01*K_u*(198.438-197.718), K_u*(50.05-21.36)])*-1
 
-t = np.linspace(0, 1500, 1501)
+t = np.linspace(0, 1500, 15001)
 x = np.array([1, 1, 1, 0, 0, 0])*np.radians(20)
 
 u = np.zeros((np.size(t), 3))
@@ -43,7 +43,7 @@ theta = 70
 u[cmd1] = np.radians(np.array([1, 1, 1])*theta)
 u[cmd2] = np.radians(np.array([1, 1, 1])*-theta)
 
-lim = 1500
+lim = np.size(t)
 pd = util.Controller(K_p, K_d, sampling_frequency=1 / 0.1, response_function = "Euler_PD")
 sim = util.simulator(pd, u[:lim], x, t[:lim], J,  n, M_d)
 y = sim.run()

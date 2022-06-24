@@ -15,7 +15,7 @@ c[4:,:] = red
 Title_font = pg.font.SysFont('agencyfb', 30)
 Time_font = pg.font.SysFont('agencyfb', 30)
 
-file = "Quaternion_NDI_TS.csv"
+file = "../Quaternion_INDI_TS.csv"
 y = np.genfromtxt(file, delimiter=",")
 # y = np.genfromtxt("Euler_PD_sim.csv", delimiter=",")
 t = y[0]
@@ -50,14 +50,13 @@ def paused(pause):
                     pause = False
         pg.display.update()
         clock.tick(15)
-lim_finish = np.array([115, 515, 915])
+lim_finish = np.array([230, 600, 1040])
 lim_start = np.array([99, 499, 899])
-# lim_finish = np.array([280, 700, 1200])
-# lim_start = np.array([94, 490, 890])
+
 idx = [(x > lim_start[0] and x < lim_finish[0]) or
        (x > lim_start[1] and x < lim_finish[1]) or
        (x > lim_start[2] and x < lim_finish[2]) for x in t]
-time_scale = 2
+time_scale = 40
 
 axis_init = np.identity(3)
 scale = 100
@@ -66,6 +65,7 @@ displace = s/2
 origin  = (displace, displace)
 t = t[idx]
 q_sim = q_sim[idx]
+k=0
 Title = Title_font.render(f'S/C Controller Model: {file[:-4]}', False, white)
 for i,q in enumerate(q_sim):
     j=i
@@ -119,8 +119,10 @@ for i,q in enumerate(q_sim):
         if event.key == pg.K_p:
             pause = True
             paused(pause)
-
-    pg.image.save(window, f"NDI_TS_imgs/NDI_TS_{t[j]}.png")
+    if j%8 == 0:
+        k += 1
+        pg.image.save(window, f"../INDI_TS_imgs/INDI_TS_PD_{j}.png")
     pg.display.update()
 pause = True
+print(k)
 paused(pause)

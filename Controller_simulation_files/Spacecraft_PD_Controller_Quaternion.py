@@ -28,7 +28,7 @@ x = np.array([1/np.sqrt(3)*np.sin(np.radians(20)/2),
               np.cos(np.radians(20)/2),
               0, 0, 0])
 
-t = np.linspace(0,1500, 1501)
+t = np.linspace(0,1500, 15001)
 
 
 u = np.zeros((np.size(t), 4))
@@ -43,7 +43,7 @@ u[cmd1, -1] = np.cos(np.radians(theta)/2)
 u[cmd2, :3] = np.array([1, 1, 1])*1/np.sqrt(3)*np.sin(np.radians(-theta)/2)
 u[cmd2, -1] = np.cos(np.radians(-theta)/2)
 
-lim = 1500
+lim = np.size(t)
 pd = util.Controller(K_p, K_d, sampling_frequency=1 / 0.1, response_function = "Quaternion_PD")
 sim = util.simulator(pd, u[:lim], x, t[:lim], J,  n, M_d)
 y = sim.run()

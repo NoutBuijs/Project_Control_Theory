@@ -24,13 +24,13 @@ class simulator:
     def run(self):
 
         if np.shape(self.u)[1] == 3:
-            x = int.solve_ivp(self.dxdt_euler, (self.t[0], self.t[-1]), self.x_0, max_step = 0.1)#, rtol = 1E-5, atol=1E-5)#, method="DOP853")
+            x = int.solve_ivp(self.dxdt_euler, (self.t[0], self.t[-1]), self.x_0, max_step = 0.1, t_eval=self.t)#, rtol = 1E-5, atol=1E-5)#, method="DOP853")
             self.controller.reset()
             self.reset()
             return x
 
         else:
-            x = int.solve_ivp(self.dxdt_quat, (self.t[0], self.t[-1]), self.x_0, max_step = 0.1)#,rtol = 1E-16, atol=1E-16, method="DOP853")
+            x = int.solve_ivp(self.dxdt_quat, (self.t[0], self.t[-1]), self.x_0, max_step = 0.1, t_eval=self.t)#,rtol = 1E-16, atol=1E-16, method="DOP853")
             self.controller.reset()
             self.reset()
             return x
