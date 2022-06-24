@@ -24,13 +24,13 @@ class simulator:
     def run(self):
 
         if np.shape(self.u)[1] == 3:
-            x = int.solve_ivp(self.dxdt_euler, (self.t[0], self.t[-1]), self.x_0, rtol = 1E-5, atol=1E-5)#, method="DOP853")
+            x = int.solve_ivp(self.dxdt_euler, (self.t[0], self.t[-1]), self.x_0, max_step = 0.1)#, rtol = 1E-5, atol=1E-5)#, method="DOP853")
             self.controller.reset()
             self.reset()
             return x
 
         else:
-            x = int.solve_ivp(self.dxdt_quat, (self.t[0], self.t[-1]), self.x_0, max_step = 0.1)#,rtol = 1E-11, atol=1E-11, method="DOP853")
+            x = int.solve_ivp(self.dxdt_quat, (self.t[0], self.t[-1]), self.x_0, max_step = 0.1)#,rtol = 1E-16, atol=1E-16, method="DOP853")
             self.controller.reset()
             self.reset()
             return x
@@ -218,7 +218,7 @@ class Controller:
                         [ u[0],  u[1],  u[2],  u[3]]])
 
         e_dot = - 1/2 * Omega_b @ x
-        return (self.K_p * (x-u) + self.K_d * e_dot)[:3]
+        return (self.K_p * (L_c @ x) + self.K_d * e_dot)[:3]
 
     def PD_response_euler(self, u, x, omega_b, omega_b_dot = 0):
 
@@ -341,7 +341,7 @@ class Controller:
                         [u[1], -u[0], u[3], -u[2]],
                         [u[0], u[1], u[2], u[3]]])
 
-        return np.linalg.inv(A) @ ((self.K_p * (L_c @ x) + self.K_d * (L_c @ e_dot))[:3] - B)
+        return np.linalg.inv(A) @ ((self.K_p * (L_c @ x) + self.K_d * e_dot)[:3] - B)
 
     def NDI_TS_response_q(self, u, x, omega_b, omega_b_dot = 0):
         L_c = np.array([[u[3], u[2], -u[1], -u[0]],

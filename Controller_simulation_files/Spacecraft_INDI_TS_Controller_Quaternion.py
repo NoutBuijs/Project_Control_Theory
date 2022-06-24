@@ -15,7 +15,10 @@ w1 = 1
 K_p = np.array([w, w, w, 0])*-0.25
 K_d = np.array([w1, w1, w1, 0])*-0.006
 
-x = np.array([0, 0, 0, 1,
+x = np.array([1/np.sqrt(3)*np.sin(np.radians(20)/2),
+              1/np.sqrt(3)*np.sin(np.radians(20)/2),
+              1/np.sqrt(3)*np.sin(np.radians(20)/2),
+              np.cos(np.radians(20)/2),
               0, 0, 0])
 
 t = np.linspace(0,1500, 1500)
@@ -40,11 +43,21 @@ y = sim.run()
 y.y[3] = np.sign(y.y[3])  * np.sqrt(1 - np.linalg.norm(y.y[:3], axis = 0)**2)
 sns.set_theme()
 sns.set_palette("rocket")
-fig, axs = plt.subplots(2,4, figsize=(17,20))
-fig.suptitle(f"K_p = {K_p} \n K_d = {K_d}")
-for i, solution in enumerate(y.y):
-        np.concatenate(axs)[i].plot(y.t, solution, c = "k", ls = "--")
+fig, axs = plt.subplots(1,4, figsize=(17,20))
+fig.tight_layout()
+name = "Quaternion INDI-TS Controller"
+fig.suptitle(f"{name} \n Kp: {K_p[:3]} \n Kd: {K_d[:3]}",fontsize=18)
+for i, solution in enumerate(y.y[:4]):
+        axs[i].plot(y.t, solution, c = "k", ls = "--", label="Controller")
+        axs[i].set_xlim(np.min(y.t), np.max(y.t))
+        axs[i].set_ylim(np.min((np.min(solution)*0.9,np.min(solution)*1.1)) , np.max(solution)*1.1)
+        axs[i].set_ylabel(u"x{0:.0f} [-]".format(i), fontsize=18)
+        axs[i].set_xlabel(u"t [s]", fontsize=18)
+        axs[i].set_yticklabels(labels=np.round(axs[i].get_yticks(), 2), fontsize=14)
+        axs[i].set_xticklabels(labels=np.round(axs[i].get_xticks()).astype(int), fontsize=12)
         if i < 4:
-            np.concatenate(axs)[i].plot(t[:lim], u[:lim, i], c = "r")
+            axs[i].plot(t[:lim], u[:lim, i], c = "r", label="Command")
+        if i == 3:
+            axs[i].legend(fontsize=16)
 
 # np.savetxt("Quat_NDI_sim_999.csv", np.vstack((y.t, y.y[:4])), delimiter=",")
